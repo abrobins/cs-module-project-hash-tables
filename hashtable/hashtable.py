@@ -27,7 +27,9 @@ class HashTable:
 
         if capacity < MIN_CAPACITY:
             self.capacity = MIN_CAPACITY
+
         self.storage = [None] * self.capacity
+        self.items_in_storage = 0
 
     def get_num_slots(self):
         """
@@ -91,8 +93,42 @@ class HashTable:
         Implement this.
         """
         # Your code here
+
+        # DAY 1 CODE
+        # hash_index = self.hash_index(key)
+        # self.storage[hash_index] = HashTableEntry(key, value)
+
+        # DAY 2
+        # find the start of the linked list using the index
+    # Search through linked list
+    # IF the key already exists in the linked list
+        # Replace the value
+    # Else
+        # Add new HashTable Entry to the head of linked list
+
         hash_index = self.hash_index(key)
-        self.storage[hash_index] = HashTableEntry(key, value)
+
+        # find an empty spot for new data
+        if not self.storage[hash_index]:
+            self.storage[hash_index] = HashTableEntry(key, value)
+            self.items_in_storage += 1
+
+        # if a linked list already exists at this location
+        # we either update the value for an existing key OR create a new entry for the key
+        else:
+            current = self.storage[hash_index]
+
+            while current.key != key and current.next:
+                current = current.next
+
+            # find the key and update its current value
+            if current.key == key:
+                current.value = value
+
+            # if key not found, we just add a new node entry
+            else:
+                current.next = HashTableEntry(key, value)
+                self.items_in_storage += 1
 
     def delete(self, key):
         """
@@ -120,11 +156,24 @@ class HashTable:
         Implement this.
         """
         # Your code here
+
+        # DAY 1 CODE
+        # hash_index = self.hash_index(key)
+        # if self.storage[hash_index] is not None:
+        #     return self.storage[hash_index].value
+        # else:
+        #     return None
+
+        # DAY 2 CODE
+
         hash_index = self.hash_index(key)
-        if self.storage[hash_index] is not None:
-            return self.storage[hash_index].value
-        else:
-            return None
+        current = self.storage[hash_index]
+        while current != None:
+            # if key exists
+            if current.key == key:
+                return current.value
+            current = current.next
+        return None
 
     def resize(self, new_capacity):
         """
