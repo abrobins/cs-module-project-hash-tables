@@ -52,6 +52,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.items_in_storage/self.capacity
 
     def fnv1(self, key):
         """
@@ -130,6 +131,9 @@ class HashTable:
                 current.next = HashTableEntry(key, value)
                 self.items_in_storage += 1
 
+        if self.get_load_factor() > 0.7:
+            self.resize(self.capacity*2)
+
     def delete(self, key):
         """
         Remove the value stored with the given key.
@@ -140,12 +144,34 @@ class HashTable:
         """
         # Your code here
         # first need to hash the key
+        # DAY 1 CODE
+        # hash_index = self.hash_index(key)
+        # # check if value in array, if it is set it to None
+        # if self.storage[hash_index] is not None:
+        #     self.storage[hash_index] = None
+        # else:
+        #     print("Key not found")
+
+        # DAY 2 CODE
+
         hash_index = self.hash_index(key)
-        # check if value in array, if it is set it to None
-        if self.storage[hash_index] is not None:
-            self.storage[hash_index] = None
-        else:
-            print("Key not found")
+        current = self.storage[hash_index]
+
+        while current.next != None:
+            if current.key == key:
+                current.value = None
+                return
+
+            else:
+                current = current.next
+        if current.next == None:
+            if current.key == key:
+                current.value = None
+
+        # resize if load factor is too small
+
+        if self.get_load_factor() < 0.2:
+            self.resize(self.capacity // 2)
 
     def get(self, key):
         """
@@ -183,6 +209,21 @@ class HashTable:
         Implement this.
         """
         # Your code here
+
+        old_data = self.storage
+
+        # init new hash table
+        self.capacity = new_capacity
+        self.storage = [None] * new_capacity
+
+        # loop through and add each node to new hashtable
+
+        for i in old_data:
+            if i:
+                current = i
+                while current:
+                    self.put(current.key, current.value)
+                    current = current.next
 
 
 if __name__ == "__main__":
